@@ -4,6 +4,18 @@
 
 package frc.robot;
 
+/**
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in
+ * the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of
+ * the robot (including
+ * subsystems, commands, and button mappings) should be declared here.
+ */
+public class RobotContainer {
+  
+//Swerve required imports
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
@@ -17,7 +29,21 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
+//Elevator required imports
+import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.*;
+import frc.robot.subsystems.*;
+
+
+
 public class RobotContainer {
+
+  // Variables needed by Swerve to drive the robot
   private double MaxSpeed = TunerConstants.kSpeedAt12VoltsMps; // kSpeedAt12VoltsMps desired top speed
   private double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
 
@@ -33,6 +59,9 @@ public class RobotContainer {
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
   private final Telemetry logger = new Telemetry(MaxSpeed);
+  
+  //Variables reqired for Elveator
+  public final ElevatorSubsystem m_Elevator = new ElevatorSubsystem();
 
   private void configureBindings() {
     drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
@@ -53,6 +82,9 @@ public class RobotContainer {
       drivetrain.seedFieldRelative(new Pose2d(new Translation2d(), Rotation2d.fromDegrees(90)));
     }
     drivetrain.registerTelemetry(logger::telemeterize);
+    
+    joystick.povUp().whileTrue(new InstantCommand(() -> m_Elevator.runElevatorUp())).onFalse(new InstantCommand(() -> m_Elevator.stopElevator()));
+    joystick.povDown().whileTrue(new InstantCommand(() -> m_Elevator.runElevatorDown())).onFalse(new InstantCommand(() -> m_Elevator.stopElevator()));
   }
 
   public RobotContainer() {
@@ -63,3 +95,4 @@ public class RobotContainer {
     return Commands.print("No autonomous command configured");
   }
 }
+  
