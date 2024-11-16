@@ -49,13 +49,7 @@ public class RobotContainer {
                         .withRotationalRate(rotationalRate); // Drive counterclockwise with positive X (left)
         }));
 
-        joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.b().whileTrue(drivetrain.applyRequest(() -> {
-          double directionX = joystick.getLeftX();
-          double directionY = joystick.getLeftY();
-          Rotation2d moduleDirection = new Rotation2d(directionY, directionX);
-          return point.withModuleDirection(moduleDirection);
-        }));
+        joystick.b().whileTrue(drivetrain.applyRequest(() -> brake));
         
         // reset the field-centric heading on left bumper press
         joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
