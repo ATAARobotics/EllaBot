@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.ElevatorSubsystem;
 
 public class RobotContainer {
   private double MaxSpeed = TunerConstants.kSpeedAt12VoltsMps; // kSpeedAt12VoltsMps desired top speed
@@ -34,6 +35,8 @@ public class RobotContainer {
 
   private final Telemetry logger = new Telemetry(MaxSpeed);
 
+  private final ElevatorSubsystem elevator = new ElevatorSubsystem();
+
   private void configureBindings() {
     drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
         drivetrain.applyRequest(() -> {
@@ -46,23 +49,28 @@ public class RobotContainer {
                         .withRotationalRate(rotationalRate); // Drive counterclockwise with positive X (left)
         }));
 
-    joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-    joystick.b().whileTrue(drivetrain.applyRequest(() -> {
-        double directionX = joystick.getLeftX();
-        double directionY = joystick.getLeftY();
-        Rotation2d moduleDirection = new Rotation2d(directionY, directionX);
-        return point.withModuleDirection(moduleDirection);
-    }));
-
-    // reset the field-centric heading on left bumper press
-    joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
-}
+        joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
+        joystick.b().whileTrue(drivetrain.applyRequest(() -> {
+          double directionX = joystick.getLeftX();
+          double directionY = joystick.getLeftY();
+          Rotation2d moduleDirection = new Rotation2d(directionY, directionX);
+          return point.withModuleDirection(moduleDirection);
+        }));
+        
+        // reset the field-centric heading on left bumper press
+        joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
+        
+        // elevator control using D-Pad
+        joystick.povUp().whileTrue(Commands.run(() -> elevator.runElevatorUp(), elevator));
+        joystick.povDown().whileTrue(Commands.run(() -> elevator.runElevatorDown(), elevator));
+        joystick.povUp().or(joystick.povDown()).onFalse(Commands.run(() -> elevator.stopElevator(), elevator));
+  }
 
   public RobotContainer() {
-    configureBindings();
+      configureBindings();
   }
 
   public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
+      return Commands.print("No autonomous command configured");
   }
 }
