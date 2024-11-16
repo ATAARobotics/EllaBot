@@ -20,6 +20,7 @@ public final class Constants {
 
     public static final double elevatorSpeed = 0.3;
 
+    public static final int elevatorEncoderID = 17;
   }
 
   public static class OperatorConstants {
