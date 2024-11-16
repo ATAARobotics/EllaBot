@@ -78,8 +78,6 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
                 this.setOperatorPerspectiveForward(perspectiveRotation);
                 hasAppliedOperatorPerspective = true;
 
-                // Debug output
-                System.out.println("Applied Operator Perspective: " + perspectiveRotation.getDegrees() + " degrees for " + allianceColor + " alliance");
             });
         }
     }
