@@ -38,6 +38,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
             startSimThread();
         }
     }
+
     public CommandSwerveDrivetrain(SwerveDrivetrainConstants driveTrainConstants, SwerveModuleConstants... modules) {
         super(driveTrainConstants, modules);
         if (Utils.isSimulation()) {
@@ -70,13 +71,15 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
         /* If we haven't applied the operator perspective before, then we should apply it regardless of DS state */
         /* This allows us to correct the perspective in case the robot code restarts mid-match */
         /* Otherwise, only check and apply the operator perspective if the DS is disabled */
-        /* This ensures driving behavior doesn't change until an explicit disable event occurs during testing*/
+        /* This ensures driving behavior doesn't change until an explicit disable event occurs during testing */
         if (!hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
             DriverStation.getAlliance().ifPresent((allianceColor) -> {
-                this.setOperatorPerspectiveForward(
-                        allianceColor == Alliance.Red ? RedAlliancePerspectiveRotation
-                                : BlueAlliancePerspectiveRotation);
+                Rotation2d perspectiveRotation = allianceColor == Alliance.Red ? RedAlliancePerspectiveRotation : BlueAlliancePerspectiveRotation;
+                this.setOperatorPerspectiveForward(perspectiveRotation);
                 hasAppliedOperatorPerspective = true;
+
+                // Debug output
+                System.out.println("Applied Operator Perspective: " + perspectiveRotation.getDegrees() + " degrees for " + allianceColor + " alliance");
             });
         }
     }
