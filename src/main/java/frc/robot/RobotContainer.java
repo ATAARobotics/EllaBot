@@ -47,10 +47,16 @@ public class RobotContainer {
         // reset the field-centric heading on left bumper press
         joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
         
-        // elevator control using D-Pad
+        // elevator control using pov
         joystick.povUp().whileTrue(Commands.run(() -> elevator.runElevatorUp(), elevator));
         joystick.povDown().whileTrue(Commands.run(() -> elevator.runElevatorDown(), elevator));
         joystick.povUp().or(joystick.povDown()).onFalse(Commands.run(() -> elevator.stopElevator(), elevator));
+
+        // elevator run to position
+        // y = top, x = middle, a = bottom
+        joystick.y().whileTrue(Commands.run(() -> elevator.goToPosition(ElevatorSubsystem.ElevatorPosition.TOP), elevator));
+        joystick.x().whileTrue(Commands.run(() -> elevator.goToPosition(ElevatorSubsystem.ElevatorPosition.MIDDLE), elevator));
+        joystick.a().whileTrue(Commands.run(() -> elevator.goToPosition(ElevatorSubsystem.ElevatorPosition.BOTTOM), elevator));
   }
 
   public RobotContainer() {
