@@ -16,6 +16,11 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     private final double bottomPosition = 1;
     private final double topPosition = 4.308837890625;
+    private final double middlePosition = (topPosition - bottomPosition) / 2;
+
+    public enum ElevatorPosition {
+        BOTTOM, MIDDLE, TOP
+    }
 
     public ElevatorSubsystem() {
         leftElevator = new CANSparkMax(Constants.SubsystemConstants.leftElevatorID, MotorType.kBrushless);
@@ -52,6 +57,34 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         if (elevatorEncoder.getPosition().getValue() <= bottomPosition) {
             stopElevator();
+        }
+    }
+
+    public void goToPosition(ElevatorPosition position) {
+        switch (position) {
+            case BOTTOM:
+                if (elevatorEncoder.getPosition().getValue() > bottomPosition) {
+                    runElevatorDown();
+                } else {
+                    stopElevator();
+                }
+                break;
+            case MIDDLE:
+                if (elevatorEncoder.getPosition().getValue() > middlePosition) {
+                    runElevatorDown();
+                } else if (elevatorEncoder.getPosition().getValue() < middlePosition) {
+                    runElevatorUp();
+                } else {
+                    stopElevator();
+                }
+                break;
+            case TOP:
+                if (elevatorEncoder.getPosition().getValue() < topPosition) {
+                    runElevatorUp();
+                } else {
+                    stopElevator();
+                }
+                break;
         }
     }
 
