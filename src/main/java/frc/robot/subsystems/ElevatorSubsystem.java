@@ -14,19 +14,23 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     public CANcoder elevatorEncoder;
 
-    private final double bottomPosition = 1;
-    private final double topPosition = 4.308837890625;
-    private final double middlePosition = (topPosition - bottomPosition) / 2;
+    private final double bottomPosition;
+    private final double topPosition;
+    private final double middlePosition;
 
     public enum ElevatorPosition {
         BOTTOM, MIDDLE, TOP
     }
 
     public ElevatorSubsystem() {
-        leftElevator = new CANSparkMax(Constants.SubsystemConstants.leftElevatorID, MotorType.kBrushless);
-        rightElevator = new CANSparkMax(Constants.SubsystemConstants.rightElevatorID, MotorType.kBrushless);
+        leftElevator = new CANSparkMax(Constants.ElevatorConstants.leftElevatorID, MotorType.kBrushless);
+        rightElevator = new CANSparkMax(Constants.ElevatorConstants.rightElevatorID, MotorType.kBrushless);
 
-        elevatorEncoder = new CANcoder(Constants.SubsystemConstants.elevatorEncoderID);
+        elevatorEncoder = new CANcoder(Constants.ElevatorConstants.elevatorEncoderID);
+
+        bottomPosition = Constants.ElevatorConstants.bottomPosition;
+        middlePosition = Constants.ElevatorConstants.middlePosition;
+        topPosition = Constants.ElevatorConstants.topPosition;
         
         // set elevator to brake mode :)
         leftElevator.setIdleMode(IdleMode.kBrake);
@@ -39,8 +43,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public void runElevatorUp() {
-        leftElevator.set(-Constants.SubsystemConstants.elevatorSpeed);
-        rightElevator.set(-Constants.SubsystemConstants.elevatorSpeed);
+        leftElevator.set(-Constants.ElevatorConstants.elevatorSpeed);
+        rightElevator.set(-Constants.ElevatorConstants.elevatorSpeed);
 
         System.out.println(elevatorEncoder.getPosition().getValue());
 
@@ -50,8 +54,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public void runElevatorDown() {
-        leftElevator.set(Constants.SubsystemConstants.elevatorSpeed);
-        rightElevator.set(Constants.SubsystemConstants.elevatorSpeed);
+        leftElevator.set(Constants.ElevatorConstants.elevatorSpeed);
+        rightElevator.set(Constants.ElevatorConstants.elevatorSpeed);
 
         System.out.println(elevatorEncoder.getPosition().getValue());
 

@@ -14,13 +14,19 @@ package frc.robot;
  */
 public final class Constants {
 
-  public static class SubsystemConstants {
+  public static class ElevatorConstants {
+
+    //Elevator Constants
+    //CAN ID's
     public static final int leftElevatorID = 14;
     public static final int rightElevatorID = 13;
-
-    public static final double elevatorSpeed = 0.3;
-
     public static final int elevatorEncoderID = 17;
+    //Speed
+    public static final double elevatorSpeed = 0.3;
+    //Position Presets
+    public static final double bottomPosition = 1;
+    public static final double topPosition = 4.308837890625;
+    public static final double middlePosition = (topPosition - bottomPosition) / 2;
   }
 
   public static class OperatorConstants {
