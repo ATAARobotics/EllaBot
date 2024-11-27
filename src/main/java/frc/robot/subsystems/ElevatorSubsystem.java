@@ -43,25 +43,25 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public void runElevatorUp() {
+        if (elevatorEncoder.getPosition().getValue() >= topPosition) {
+            stopElevator();
+            return;
+        }
         leftElevator.set(-Constants.ElevatorConstants.elevatorSpeed);
         rightElevator.set(-Constants.ElevatorConstants.elevatorSpeed);
 
         System.out.println(elevatorEncoder.getPosition().getValue());
-
-        if (elevatorEncoder.getPosition().getValue() >= topPosition) {
-            stopElevator();
-        }
     }
 
     public void runElevatorDown() {
+        if (elevatorEncoder.getPosition().getValue() <= bottomPosition) {
+            stopElevator();
+            return;
+        }
         leftElevator.set(Constants.ElevatorConstants.elevatorSpeed);
         rightElevator.set(Constants.ElevatorConstants.elevatorSpeed);
 
         System.out.println(elevatorEncoder.getPosition().getValue());
-
-        if (elevatorEncoder.getPosition().getValue() <= bottomPosition) {
-            stopElevator();
-        }
     }
 
     public void goToPosition(ElevatorPosition position) {
