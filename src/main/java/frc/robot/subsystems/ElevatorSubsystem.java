@@ -63,26 +63,28 @@ public class ElevatorSubsystem extends SubsystemBase {
     public void goToPosition(ElevatorPosition position) {
         switch (position) {
             case BOTTOM:
-                if (elevatorEncoder.getPosition().getValue() > bottomPosition) {
+                while (elevatorEncoder.getPosition().getValue() > bottomPosition) {
                     runElevatorDown();
-                } else {
-                    stopElevator();
+                    if (elevatorEncoder.getPosition().getValue() <= bottomPosition) {
+                        stopElevator();
+                    }
                 }
                 break;
             case MIDDLE:
-                if (elevatorEncoder.getPosition().getValue() > middlePosition) {
+                while (elevatorEncoder.getPosition().getValue() > middlePosition + 0.2) {
                     runElevatorDown();
-                } else if (elevatorEncoder.getPosition().getValue() < middlePosition) {
+                } 
+                while (elevatorEncoder.getPosition().getValue() < middlePosition - 0.2) {
                     runElevatorUp();
-                } else {
-                    stopElevator();
                 }
+                stopElevator();
                 break;
             case TOP:
-                if (elevatorEncoder.getPosition().getValue() < topPosition) {
+                while (elevatorEncoder.getPosition().getValue() < topPosition) {
                     runElevatorUp();
-                } else {
-                    stopElevator();
+                    if (elevatorEncoder.getPosition().getValue() >= topPosition) {
+                        stopElevator();
+                    }
                 }
                 break;
         }
