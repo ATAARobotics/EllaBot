@@ -33,8 +33,8 @@ public class RobotContainer {
   private void configureBindings() {
     drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
         drivetrain.applyRequest(() -> {
-            double velocityX = joystick.getLeftY() * MaxSpeed;
-            double velocityY = joystick.getLeftX() * MaxSpeed;
+            double velocityX = -joystick.getLeftY() * MaxSpeed;
+            double velocityY = -joystick.getLeftX() * MaxSpeed;
             double rotationalRate = joystick.getRightX() * MaxAngularRate;
 
             return drive.withVelocityX(velocityX) // Drive forward with positive Y (forward)
