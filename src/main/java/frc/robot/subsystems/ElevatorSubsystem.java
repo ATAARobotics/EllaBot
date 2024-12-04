@@ -56,8 +56,8 @@ public class ElevatorSubsystem extends SubsystemBase {
             stopElevator();
             return;
         }
-        leftElevator.set(-Constants.ElevatorConstants.ELEVATOR_SPEED);
-        rightElevator.set(-Constants.ElevatorConstants.ELEVATOR_SPEED);
+        leftElevator.set(Constants.ElevatorConstants.ELEVATOR_SPEED);
+        rightElevator.set(Constants.ElevatorConstants.ELEVATOR_SPEED);
 
         System.out.println(elevatorEncoder.getPosition().getValue());
     }
@@ -67,8 +67,8 @@ public class ElevatorSubsystem extends SubsystemBase {
             stopElevator();
             return;
         }
-        leftElevator.set(Constants.ElevatorConstants.ELEVATOR_SPEED);
-        rightElevator.set(Constants.ElevatorConstants.ELEVATOR_SPEED);
+        leftElevator.set(-Constants.ElevatorConstants.ELEVATOR_SPEED);
+        rightElevator.set(-Constants.ElevatorConstants.ELEVATOR_SPEED);
 
         System.out.println(elevatorEncoder.getPosition().getValue());
     }
