@@ -28,9 +28,9 @@ public final class Constants {
     public static final double TOP_POSITION = 4.308837890625;
     public static final double MIDDLE_POSITION = (TOP_POSITION - BOTTOM_POSITION) / 2;
     //PID Consts
-    public static final double KP = 0.1;
+    public static final double KP = 0.75;
     public static final double KI = 0;
-    public static final double KD = 0;
+    public static final double KD = 0.05;
 
   }
 
