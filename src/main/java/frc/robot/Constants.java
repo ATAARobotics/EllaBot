@@ -27,6 +27,11 @@ public final class Constants {
     public static final double bottomPosition = 1;
     public static final double topPosition = 4.308837890625;
     public static final double middlePosition = (topPosition - bottomPosition) / 2;
+    //PID Consts
+    public static final double kp = 0.1;
+    public static final double ki = 0;
+    public static final double kd = 0;
+
   }
 
   public static class OperatorConstants {
