@@ -4,18 +4,15 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule.DriveRequestType;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.ElevatorSubsystem;
 
 public class RobotContainer {
   private double MaxSpeed = TunerConstants.kSpeedAt12VoltsMps; // kSpeedAt12VoltsMps desired top speed
@@ -30,15 +27,14 @@ public class RobotContainer {
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // I want field-centric
                                                                // driving in open loop
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-  private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
-  private final Telemetry logger = new Telemetry(MaxSpeed);
+  private final ElevatorSubsystem elevator = new ElevatorSubsystem();
 
   private void configureBindings() {
     drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
         drivetrain.applyRequest(() -> {
-            double velocityX = joystick.getLeftY() * MaxSpeed;
-            double velocityY = joystick.getLeftX() * MaxSpeed;
+            double velocityX = -joystick.getLeftY() * MaxSpeed;
+            double velocityY = -joystick.getLeftX() * MaxSpeed;
             double rotationalRate = joystick.getRightX() * MaxAngularRate;
 
             return drive.withVelocityX(velocityX) // Drive forward with positive Y (forward)
@@ -46,23 +42,28 @@ public class RobotContainer {
                         .withRotationalRate(rotationalRate); // Drive counterclockwise with positive X (left)
         }));
 
-    joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-    joystick.b().whileTrue(drivetrain.applyRequest(() -> {
-        double directionX = joystick.getLeftX();
-        double directionY = joystick.getLeftY();
-        Rotation2d moduleDirection = new Rotation2d(directionY, directionX);
-        return point.withModuleDirection(moduleDirection);
-    }));
+        joystick.b().whileTrue(drivetrain.applyRequest(() -> brake));
+        
+        // reset the field-centric heading on left bumper press
+        joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
+        
+        // elevator control using pov
+        joystick.povUp().whileTrue(Commands.run(() -> elevator.runElevatorUp(), elevator));
+        joystick.povDown().whileTrue(Commands.run(() -> elevator.runElevatorDown(), elevator));
+        joystick.povUp().or(joystick.povDown()).onFalse(Commands.run(() -> elevator.stopElevator(), elevator));
 
-    // reset the field-centric heading on left bumper press
-    joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
-}
+        // elevator run to position
+        // y = top, x = middle, a = bottom
+        joystick.y().whileTrue(Commands.run(() -> elevator.goToPosition(ElevatorSubsystem.ElevatorPosition.TOP), elevator));
+        joystick.x().whileTrue(Commands.run(() -> elevator.goToPosition(ElevatorSubsystem.ElevatorPosition.MIDDLE), elevator));
+        joystick.a().whileTrue(Commands.run(() -> elevator.goToPosition(ElevatorSubsystem.ElevatorPosition.BOTTOM), elevator));
+  }
 
   public RobotContainer() {
-    configureBindings();
+      configureBindings();
   }
 
   public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
+      return Commands.print("No autonomous command configured");
   }
 }

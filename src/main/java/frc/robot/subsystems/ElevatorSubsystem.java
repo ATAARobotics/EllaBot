@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -11,9 +12,25 @@ public class ElevatorSubsystem extends SubsystemBase {
     public CANSparkMax leftElevator;
     public CANSparkMax rightElevator;
 
+    public CANcoder elevatorEncoder;
+
+    private final double bottomPosition;
+    private final double topPosition;
+    private final double middlePosition;
+
+    public enum ElevatorPosition {
+        BOTTOM, MIDDLE, TOP
+    }
+
     public ElevatorSubsystem() {
-        leftElevator = new CANSparkMax(Constants.SubsystemConstants.leftElevatorID, MotorType.kBrushless);
-        rightElevator = new CANSparkMax(Constants.SubsystemConstants.rightElevatorID, MotorType.kBrushless);
+        leftElevator = new CANSparkMax(Constants.ElevatorConstants.leftElevatorID, MotorType.kBrushless);
+        rightElevator = new CANSparkMax(Constants.ElevatorConstants.rightElevatorID, MotorType.kBrushless);
+
+        elevatorEncoder = new CANcoder(Constants.ElevatorConstants.elevatorEncoderID);
+
+        bottomPosition = Constants.ElevatorConstants.bottomPosition;
+        middlePosition = Constants.ElevatorConstants.middlePosition;
+        topPosition = Constants.ElevatorConstants.topPosition;
         
         // set elevator to brake mode :)
         leftElevator.setIdleMode(IdleMode.kBrake);
@@ -26,15 +43,55 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public void runElevatorUp() {
-        leftElevator.set(-Constants.SubsystemConstants.elevatorSpeed);
-        rightElevator.set(-Constants.SubsystemConstants.elevatorSpeed);
+        leftElevator.set(-Constants.ElevatorConstants.elevatorSpeed);
+        rightElevator.set(-Constants.ElevatorConstants.elevatorSpeed);
 
+        System.out.println(elevatorEncoder.getPosition().getValue());
+
+        if (elevatorEncoder.getPosition().getValue() >= topPosition) {
+            stopElevator();
+        }
     }
 
     public void runElevatorDown() {
-        leftElevator.set(Constants.SubsystemConstants.elevatorSpeed);
-        rightElevator.set(Constants.SubsystemConstants.elevatorSpeed);
+        leftElevator.set(Constants.ElevatorConstants.elevatorSpeed);
+        rightElevator.set(Constants.ElevatorConstants.elevatorSpeed);
 
+        System.out.println(elevatorEncoder.getPosition().getValue());
+
+        if (elevatorEncoder.getPosition().getValue() <= bottomPosition) {
+            stopElevator();
+        }
+    }
+
+    public void goToPosition(ElevatorPosition position) {
+        switch (position) {
+            case BOTTOM:
+                while (elevatorEncoder.getPosition().getValue() > bottomPosition) {
+                    runElevatorDown();
+                    if (elevatorEncoder.getPosition().getValue() <= bottomPosition) {
+                        stopElevator();
+                    }
+                }
+                break;
+            case MIDDLE:
+                while (elevatorEncoder.getPosition().getValue() > middlePosition + 0.2) {
+                    runElevatorDown();
+                } 
+                while (elevatorEncoder.getPosition().getValue() < middlePosition - 0.2) {
+                    runElevatorUp();
+                }
+                stopElevator();
+                break;
+            case TOP:
+                while (elevatorEncoder.getPosition().getValue() < topPosition) {
+                    runElevatorUp();
+                    if (elevatorEncoder.getPosition().getValue() >= topPosition) {
+                        stopElevator();
+                    }
+                }
+                break;
+        }
     }
 
     public void stopElevator() {
