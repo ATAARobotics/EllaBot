@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
 import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest;
@@ -17,6 +13,7 @@ import frc.robot.subsystems.ElevatorSubsystem;
 public class RobotContainer {
   private double MaxSpeed = TunerConstants.kSpeedAt12VoltsMps; // kSpeedAt12VoltsMps desired top speed
   private double MaxAngularRate = 1.5 * Math.PI; // 3/4 of a rotation per second max angular velocity
+  private double deadzone = 0.38; // Deadzone threshold
 
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final CommandXboxController joystick = new CommandXboxController(0); // My joystick
@@ -33,9 +30,9 @@ public class RobotContainer {
   private void configureBindings() {
     drivetrain.setDefaultCommand( // Drivetrain will execute this command periodically
         drivetrain.applyRequest(() -> {
-            double velocityX = -joystick.getLeftY() * MaxSpeed;
-            double velocityY = -joystick.getLeftX() * MaxSpeed;
-            double rotationalRate = joystick.getRightX() * MaxAngularRate;
+            double velocityX = applyDeadzone(-joystick.getLeftY()) * MaxSpeed;
+            double velocityY = applyDeadzone(-joystick.getLeftX()) * MaxSpeed;
+            double rotationalRate = applyDeadzone(joystick.getRightX()) * MaxAngularRate;
 
             return drive.withVelocityX(velocityX) // Drive forward with positive Y (forward)
                         .withVelocityY(velocityY) // Drive left with positive X (left)
@@ -61,9 +58,18 @@ public class RobotContainer {
 
   public RobotContainer() {
       configureBindings();
+      // Schedule the updateElevator method to run periodically
+      elevator.setDefaultCommand(Commands.run(() -> elevator.updateElevator(), elevator));
   }
 
   public Command getAutonomousCommand() {
       return Commands.print("No autonomous command configured");
+  }
+
+  private double applyDeadzone(double value) {
+      if (Math.abs(value) < deadzone) {
+          return 0;
+      }
+      return value;
   }
 }

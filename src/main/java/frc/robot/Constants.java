@@ -18,15 +18,20 @@ public final class Constants {
 
     //Elevator Constants
     //CAN ID's
-    public static final int leftElevatorID = 14;
-    public static final int rightElevatorID = 13;
-    public static final int elevatorEncoderID = 17;
+    public static final int LEFT_ELEVATOR_ID = 14;
+    public static final int RIGHT_ELEVATOR_ID = 13;
+    public static final int ELEVATOR_ENCODER_ID = 17;
     //Speed
-    public static final double elevatorSpeed = 0.3;
+    public static final double ELEVATOR_SPEED = 0.3;
     //Position Presets
-    public static final double bottomPosition = 1;
-    public static final double topPosition = 4.308837890625;
-    public static final double middlePosition = (topPosition - bottomPosition) / 2;
+    public static final double BOTTOM_POSITION = 1;
+    public static final double TOP_POSITION = 4.308837890625;
+    public static final double MIDDLE_POSITION = (TOP_POSITION - BOTTOM_POSITION) / 2;
+    //PID Consts
+    public static final double KP = 0.75;
+    public static final double KI = 0;
+    public static final double KD = 0.05;
+
   }
 
   public static class OperatorConstants {
