@@ -73,6 +73,10 @@ public class ElevatorSubsystem extends SubsystemBase {
         System.out.println(elevatorEncoder.getPosition().getValue());
     }
 
+    public void zero(){
+        elevatorEncoder.setPosition(0);
+    }
+
 
     public void goToPosition(ElevatorPosition position) {
         switch (position) {
@@ -126,6 +130,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     private void runElevatorUpPID(double setpoint) {
+        if (elevatorEncoder.getPosition().getValue() >= topPosition) {
+            stopElevator();
+            return;
+        }
         double output = elevatorPID.calculate(elevatorEncoder.getPosition().getValue(), setpoint);
         leftElevator.set(output);
         rightElevator.set(output);
@@ -134,6 +142,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     private void runElevatorDownPID(double setpoint) {
+        if (elevatorEncoder.getPosition().getValue() <= bottomPosition) {
+            stopElevator();
+            return;
+        }
         double output = elevatorPID.calculate(elevatorEncoder.getPosition().getValue(), setpoint);
         leftElevator.set(output);
         rightElevator.set(output);
