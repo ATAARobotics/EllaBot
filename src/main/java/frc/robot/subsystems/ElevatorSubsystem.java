@@ -1,17 +1,18 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.CANcoder;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class ElevatorSubsystem extends SubsystemBase {
-    public CANSparkMax leftElevator;
-    public CANSparkMax rightElevator;
+    public SparkMax leftElevator;
+    public SparkMax rightElevator;
 
     public CANcoder elevatorEncoder;
 
@@ -33,8 +34,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     private double targetPosition;
 
     public ElevatorSubsystem() {
-        leftElevator = new CANSparkMax(Constants.ElevatorConstants.LEFT_ELEVATOR_ID, MotorType.kBrushless);
-        rightElevator = new CANSparkMax(Constants.ElevatorConstants.RIGHT_ELEVATOR_ID, MotorType.kBrushless);
+        leftElevator = new SparkMax(Constants.ElevatorConstants.LEFT_ELEVATOR_ID, MotorType.kBrushless);
+        rightElevator = new SparkMax(Constants.ElevatorConstants.RIGHT_ELEVATOR_ID, MotorType.kBrushless);
 
         elevatorEncoder = new CANcoder(Constants.ElevatorConstants.ELEVATOR_ENCODER_ID);
 
@@ -44,11 +45,17 @@ public class ElevatorSubsystem extends SubsystemBase {
         middlePosition = Constants.ElevatorConstants.MIDDLE_POSITION;
         topPosition = Constants.ElevatorConstants.TOP_POSITION;
 
-        leftElevator.setIdleMode(IdleMode.kBrake);
-        rightElevator.setIdleMode(IdleMode.kBrake);
+        SparkBaseConfig leftConfig;
+        SparkBaseConfig rightConfig;
 
-        leftElevator.setInverted(true);
-        rightElevator.setInverted(false);
+        leftConfig.idleMode(IdleMode.kBrake);
+        rightConfig.idleMode(IdleMode.kBrake);
+
+        leftConfig.inverted(true);
+        rightConfig.inverted(false);
+
+        leftElevator.configure(leftConfig, null, null);
+        rightElevator.configure(rightConfig, null, null);
     }
 
     public void runElevatorUp() {
