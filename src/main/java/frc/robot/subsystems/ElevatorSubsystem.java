@@ -2,13 +2,12 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkBaseConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -16,9 +15,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     public SparkMax leftElevator;
     public SparkMax rightElevator;
 
-    public SparkMaxConfig leftConfig = new SparkMaxConfig();
-    public SparkMaxConfig rightConfig = new SparkMaxConfig();
-
+    public SparkMaxConfig leftConfig;
+    public SparkMaxConfig rightConfig;
+  
     public CANcoder elevatorEncoder;
 
     private PIDController elevatorPID;
@@ -36,6 +35,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     private ElevatorState currentState = ElevatorState.IDLE;
+    @SuppressWarnings("unused")
     private double targetPosition;
 
     public ElevatorSubsystem() {
@@ -49,13 +49,15 @@ public class ElevatorSubsystem extends SubsystemBase {
         bottomPosition = Constants.ElevatorConstants.BOTTOM_POSITION;
         middlePosition = Constants.ElevatorConstants.MIDDLE_POSITION;
         topPosition = Constants.ElevatorConstants.TOP_POSITION;
-        
+      
+        leftConfig = new SparkMaxConfig();
+        rightConfig = new SparkMaxConfig();
 
         leftConfig.idleMode(IdleMode.kBrake);
         rightConfig.idleMode(IdleMode.kBrake);
 
-        leftConfig.inverted(true);
-        rightConfig.inverted(false);
+        leftConfig.inverted(false);
+        rightConfig.inverted(true);
 
         leftElevator.configure(leftConfig, null, null);
         rightElevator.configure(rightConfig, null, null);
