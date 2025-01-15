@@ -55,4 +55,9 @@ public class ShooterSubsystem extends SubsystemBase{
         rightSpeed = 0.2;
 
     }
+
+    public void l1() {
+        leftSpeed = 0.25;
+        rightSpeed = 0.75;
+    }
 }

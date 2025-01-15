@@ -59,6 +59,7 @@ public class RobotContainer {
         // joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldRelative()));
 
         joystick.rightBumper().whileTrue(Commands.run(() -> m_Shooter.runShooterDefault())).onFalse(Commands.run(() -> m_Shooter.stopShooter()));
+        joystick.rightTrigger().whileTrue(Commands.run(() -> m_Shooter.l1())).onFalse(Commands.run(() -> m_Shooter.stopShooter()));
         // joystick.rightBumper().onTrue(Commands.run(() -> m_Shooter.runShooterSlow())).onFalse(Commands.run(() -> m_Shooter.stopShooter())); // find a button for this one to bind to: r]uns shooter normally but slower
 
         // if (Utils.isSimulation()) {
