@@ -55,8 +55,8 @@ public class ElevatorSubsystem extends SubsystemBase {
         leftConfig.idleMode(IdleMode.kBrake);
         rightConfig.idleMode(IdleMode.kBrake);
 
-        leftConfig.inverted(false);
-        rightConfig.inverted(true);
+        leftConfig.inverted(true);
+        rightConfig.inverted(false);
 
         leftElevator.configure(leftConfig, null, null);
         rightElevator.configure(rightConfig, null, null);
