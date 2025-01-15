@@ -1,17 +1,21 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.CANcoder;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class ElevatorSubsystem extends SubsystemBase {
-    public CANSparkMax leftElevator;
-    public CANSparkMax rightElevator;
+    public SparkMax leftElevator;
+    public SparkMax rightElevator;
+
+    public SparkBaseConfig leftConfig;
+    public SparkBaseConfig rightConfig;
 
     public CANcoder elevatorEncoder;
 
@@ -30,11 +34,12 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     private ElevatorState currentState = ElevatorState.IDLE;
+    @SuppressWarnings("unused")
     private double targetPosition;
 
     public ElevatorSubsystem() {
-        leftElevator = new CANSparkMax(Constants.ElevatorConstants.LEFT_ELEVATOR_ID, MotorType.kBrushless);
-        rightElevator = new CANSparkMax(Constants.ElevatorConstants.RIGHT_ELEVATOR_ID, MotorType.kBrushless);
+        leftElevator = new SparkMax(Constants.ElevatorConstants.LEFT_ELEVATOR_ID, MotorType.kBrushless);
+        rightElevator = new SparkMax(Constants.ElevatorConstants.RIGHT_ELEVATOR_ID, MotorType.kBrushless);
 
         elevatorEncoder = new CANcoder(Constants.ElevatorConstants.ELEVATOR_ENCODER_ID);
 
@@ -44,33 +49,36 @@ public class ElevatorSubsystem extends SubsystemBase {
         middlePosition = Constants.ElevatorConstants.MIDDLE_POSITION;
         topPosition = Constants.ElevatorConstants.TOP_POSITION;
 
-        leftElevator.setIdleMode(IdleMode.kBrake);
-        rightElevator.setIdleMode(IdleMode.kBrake);
+        leftConfig.idleMode(IdleMode.kBrake);
+        rightConfig.idleMode(IdleMode.kBrake);
 
-        leftElevator.setInverted(true);
-        rightElevator.setInverted(false);
+        leftConfig.inverted(true);
+        rightConfig.inverted(false);
+
+        leftElevator.configure(leftConfig, null, null);
+        rightElevator.configure(rightConfig, null, null);
     }
 
     public void runElevatorUp() {
-        if (elevatorEncoder.getPosition().getValue() >= topPosition) {
+        if (elevatorEncoder.getPosition().getValueAsDouble() >= topPosition) {
             stopElevator();
             return;
         }
         leftElevator.set(Constants.ElevatorConstants.ELEVATOR_SPEED);
         rightElevator.set(Constants.ElevatorConstants.ELEVATOR_SPEED);
 
-        System.out.println(elevatorEncoder.getPosition().getValue());
+        System.out.println(elevatorEncoder.getPosition().getValueAsDouble());
     }
 
     public void runElevatorDown() {
-        if (elevatorEncoder.getPosition().getValue() <= bottomPosition) {
+        if (elevatorEncoder.getPosition().getValueAsDouble() <= bottomPosition) {
             stopElevator();
             return;
         }
         leftElevator.set(-Constants.ElevatorConstants.ELEVATOR_SPEED);
         rightElevator.set(-Constants.ElevatorConstants.ELEVATOR_SPEED);
 
-        System.out.println(elevatorEncoder.getPosition().getValue());
+        System.out.println(elevatorEncoder.getPosition().getValueAsDouble());
     }
 
     public void zero(){
@@ -98,7 +106,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     public void updateElevator() {
         switch (currentState) {
             case MOVING_TO_BOTTOM:
-                if (elevatorEncoder.getPosition().getValue() > bottomPosition) {
+                if (elevatorEncoder.getPosition().getValueAsDouble() > bottomPosition) {
                     runElevatorDownPID(bottomPosition);
                 } else {
                     stopElevator();
@@ -106,9 +114,9 @@ public class ElevatorSubsystem extends SubsystemBase {
                 }
                 break;
             case MOVING_TO_MIDDLE:
-                if (elevatorEncoder.getPosition().getValue() > middlePosition + 0.2) {
+                if (elevatorEncoder.getPosition().getValueAsDouble() > middlePosition + 0.2) {
                     runElevatorDownPID(middlePosition);
-                } else if (elevatorEncoder.getPosition().getValue() < middlePosition - 0.2) {
+                } else if (elevatorEncoder.getPosition().getValueAsDouble() < middlePosition - 0.2) {
                     runElevatorUpPID(middlePosition);
                 } else {
                     stopElevator();
@@ -116,7 +124,7 @@ public class ElevatorSubsystem extends SubsystemBase {
                 }
                 break;
             case MOVING_TO_TOP:
-                if (elevatorEncoder.getPosition().getValue() < topPosition) {
+                if (elevatorEncoder.getPosition().getValueAsDouble() < topPosition) {
                     runElevatorUpPID(topPosition);
                 } else {
                     stopElevator();
@@ -130,27 +138,27 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     private void runElevatorUpPID(double setpoint) {
-        if (elevatorEncoder.getPosition().getValue() >= topPosition) {
+        if (elevatorEncoder.getPosition().getValueAsDouble() >= topPosition) {
             stopElevator();
             return;
         }
-        double output = elevatorPID.calculate(elevatorEncoder.getPosition().getValue(), setpoint);
+        double output = elevatorPID.calculate(elevatorEncoder.getPosition().getValueAsDouble(), setpoint);
         leftElevator.set(output);
         rightElevator.set(output);
 
-        System.out.println(elevatorEncoder.getPosition().getValue());
+        System.out.println(elevatorEncoder.getPosition().getValueAsDouble());
     }
 
     private void runElevatorDownPID(double setpoint) {
-        if (elevatorEncoder.getPosition().getValue() <= bottomPosition) {
+        if (elevatorEncoder.getPosition().getValueAsDouble() <= bottomPosition) {
             stopElevator();
             return;
         }
-        double output = elevatorPID.calculate(elevatorEncoder.getPosition().getValue(), setpoint);
+        double output = elevatorPID.calculate(elevatorEncoder.getPosition().getValueAsDouble(), setpoint);
         leftElevator.set(output);
         rightElevator.set(output);
 
-        System.out.println(elevatorEncoder.getPosition().getValue());
+        System.out.println(elevatorEncoder.getPosition().getValueAsDouble());
     }
 
     public void stopElevator() {
