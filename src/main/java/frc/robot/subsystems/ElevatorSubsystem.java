@@ -2,7 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkBaseConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
@@ -14,8 +14,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     public SparkMax leftElevator;
     public SparkMax rightElevator;
 
-    public SparkBaseConfig leftConfig;
-    public SparkBaseConfig rightConfig;
+    public SparkMaxConfig leftConfig;
+    public SparkMaxConfig rightConfig;
 
     public CANcoder elevatorEncoder;
 
@@ -48,6 +48,9 @@ public class ElevatorSubsystem extends SubsystemBase {
         bottomPosition = Constants.ElevatorConstants.BOTTOM_POSITION;
         middlePosition = Constants.ElevatorConstants.MIDDLE_POSITION;
         topPosition = Constants.ElevatorConstants.TOP_POSITION;
+
+        leftConfig = new SparkMaxConfig();
+        rightConfig = new SparkMaxConfig();
 
         leftConfig.idleMode(IdleMode.kBrake);
         rightConfig.idleMode(IdleMode.kBrake);
