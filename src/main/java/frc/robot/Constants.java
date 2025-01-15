@@ -18,8 +18,8 @@ public final class Constants {
 
     //Elevator Constants
     //CAN ID's
-    public static final int LEFT_ELEVATOR_ID = 14;
-    public static final int RIGHT_ELEVATOR_ID = 13;
+    public static final int LEFT_ELEVATOR_ID = 13;
+    public static final int RIGHT_ELEVATOR_ID = 14;
     public static final int ELEVATOR_ENCODER_ID = 17;
     //Speed
     public static final double ELEVATOR_SPEED = 0.3;
