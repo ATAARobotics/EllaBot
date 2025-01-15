@@ -7,7 +7,6 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -35,6 +34,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     private ElevatorState currentState = ElevatorState.IDLE;
+    @SuppressWarnings("unused")
     private double targetPosition;
 
     public ElevatorSubsystem() {
@@ -48,9 +48,6 @@ public class ElevatorSubsystem extends SubsystemBase {
         bottomPosition = Constants.ElevatorConstants.BOTTOM_POSITION;
         middlePosition = Constants.ElevatorConstants.MIDDLE_POSITION;
         topPosition = Constants.ElevatorConstants.TOP_POSITION;
-
-        SparkBaseConfig leftConfig;
-        SparkBaseConfig rightConfig;
 
         leftConfig.idleMode(IdleMode.kBrake);
         rightConfig.idleMode(IdleMode.kBrake);
